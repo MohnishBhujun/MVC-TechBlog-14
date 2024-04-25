@@ -1,0 +1,50 @@
+<div class="container mt-5 all-post-holder">
+  <!-- Card -->
+  {{#each posts}}
+    <div class="card home-post" post_id="{{this.post_id}}">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-6">
+            <h5 class="mb-0">{{this.title}}</h5>
+          </div>
+          <div class="col-6 text-right">
+            <small>Posted by {{this.user.user_name}} on {{format_time this.created_date}}</small>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-text">{{this.contents}}</p>
+      </div>
+    </div>
+    {{#each this.comments}}
+      <div class="comment-attached">
+        <div class="container mt-5">
+          <div class="card comment-card">
+            <div class="card-header comment-header"></div>
+            <div class="card-body">
+              <blockquote class="blockquote mb-0">
+                <p>{{this.comment_text}}</p>
+                <footer class="blockquote-footer">{{this.user.user_name}}, <cite title="Comment Date">{{format_time this.created_date}}</cite></footer>
+              </blockquote>
+            </div>
+          </div>
+        </div>
+      </div>
+    {{/each}}
+  {{/each}}
+</div>
+
+<div class="comment-holder hide">
+    <div class="container mt-5">
+    <div class="comment-section">
+        <h4>Comment</h4>
+        <form class="comment-form">
+            <div class="form-group">
+                <textarea class="form-control" id="comment" rows="3" placeholder="Write your comments"></textarea>
+            </div>
+            <button type="submit" class="submit-btn">Submit</button>
+        </form>
+    </div>
+  </div>
+
+<script src="/js/comment.js"></script>
