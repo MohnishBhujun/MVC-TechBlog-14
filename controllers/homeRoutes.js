@@ -15,57 +15,49 @@ router.get('/', async (req, res) => {
         ]}
       ],
     });
-    const posts = post_info.map((post) => post.get({ plain: true }));
-    res.render('homepage', {
+  
+
+    const posts = post_info.map(post => post.get({ plain: true }));
+
+    res.render('homepage',{
       posts,
-      logged_in: req.session.logged_in
     });
   } catch (err) {
     res.status(500).json(err);
   }
 });
 
-router.get('/post/:id', async (req, res) => {
-  try {
-    const post_info = await Post.findByPk(req.params.id, {
-      include: [
-        {model: User}, 
-        {model:Comment,
-          include: [
-          {
-            model: User,
-          }
-        ]}
-      ],
-    });
-    const post = post_info.get({ plain: true });
-    res.render('post', {
-      ...post,
-      logged_in: req.session.logged_in
-    });
-  } catch (err) {
-    res.status(500).json(err);
+router.get('/login', async(req, res) => {
+  if (req.session.logged_in) {
+    res.redirect('/');
+    return;
   }
-});
+  res.render('login');
+})
 
-router.get('/profile', withAuth, async (req, res) => {
-  try {
-    const user_info = await User.findByPk(req.session.user_id, {
-      include: [
-        {
-          model: Post,
-          include: [User],
-        },
-      ],
-    });
-    const user = user_info.get({ plain: true });
-    res.render('profile', {
-      ...user,
-      logged_in: true
-    });
-  } catch (err) {
-    res.status(500).json(err);
+router.get('/signup', async(req, res) => {
+  res.render('signup');
+})
+
+router.get('/dashboard', withAuth, async(req, res) => {
+  
+  try{
+    const post_info = await Post.findAll({
+      include: [{model: User}],
+      where:{user_id: req.session.user_id}
+    })
+  
+
+    const posts = post_info.map(post => post.get({ plain: true }));
+
+  
+    res.render('dashboard',{posts});
   }
-});
+  catch(err){
+    res.status(500).json({ message: 'Error fetching posts' });
+  }
+  
+})
+
 
 module.exports = router;
